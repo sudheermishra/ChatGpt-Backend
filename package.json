@@ -1,0 +1,20 @@
+{
+  "name": "chat-gpt",
+  "version": "1.0.0",
+  "description": "Backend for a ChatGPT-inspired application built with Node.js, Express.js, MongoDB, Mongoose, Redis, and Zod for validation, caching, and scalable API development.",
+  "homepage": "https://github.com/sudheermishra/ChatGpt-Backend#readme",
+  "bugs": {
+    "url": "https://github.com/sudheermishra/ChatGpt-Backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sudheermishra/ChatGpt-Backend.git"
+  },
+  "license": "ISC",
+  "author": "sudheer mishra",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
