@@ -26,7 +26,6 @@ export const signUp = async (req, resp) => {
         message: result.error.issues[0].message,
       });
     }
-    console.log("result data are ", result);
     const { name, age, email, password } = result.data;
     const existingUser = await User.findOne({ email: email });
     if (existingUser) {
@@ -66,7 +65,46 @@ export const signUp = async (req, resp) => {
 
 export const logIn = async (req, resp) => {
   try {
-  } catch (error) {}
+    const result = loginSchema.safeParse(req.body);
+    console.log("Result are", result);
+    if (!result.success) {
+      return resp.status(400).json({
+        message: result.error.issues[0].message,
+      });
+    }
+
+    const { email, password } = result.data;
+
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return resp.status(401).json({
+        message: "Invalid Email or Password",
+      });
+    }
+
+    const isMatchPassword = await bcrypt.compare(password, user.password);
+    if (!isMatchPassword) {
+      return resp.status(401).json({
+        message: "Invalid Email or Password",
+      });
+    }
+
+    const token = createToken(user._id, user.email);
+    resp.cookie("token", token, cookieOptions);
+
+    resp.status(200).json({
+      message: "User logged in successfully",
+      name: user.name,
+      age: user.age,
+      email: user.email,
+      usage: user.usage,
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
 };
 
 // export const logOut = async (req, resp) => {};
