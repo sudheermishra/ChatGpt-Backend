@@ -107,7 +107,23 @@ export const logIn = async (req, resp) => {
   }
 };
 
-// export const logOut = async (req, resp) => {};
+export const logOut = async (req, resp) => {
+  try {
+    resp.clearCookie("token", {
+      httpOnly: true,
+      secure: false,
+    });
+
+    resp.status(200).json({
+      message: "User Logged Out Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
 
 // export const deleteAccount = async (req, resp) => {};
 
