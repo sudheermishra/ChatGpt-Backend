@@ -125,6 +125,21 @@ export const logOut = async (req, resp) => {
   }
 };
 
-// export const deleteAccount = async (req, resp) => {};
+export const profile = async (req, resp) => {
+  try {
+    const { name, age, email, usage } = req.user;
+    resp.status(200).json({
+      name: name,
+      age: age,
+      email: email,
+      usage: usage,
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
 
-// export const profile = async (req, resp) => {};
+// export const deleteAccount = async (req, resp) => {};
