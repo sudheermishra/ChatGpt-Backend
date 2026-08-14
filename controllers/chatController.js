@@ -1,4 +1,5 @@
 import Chat from "../model/chatSchema.js";
+import Message from "../model/messageSchema.js";
 
 export const createChat = async (req, resp) => {
   try {
@@ -60,6 +61,31 @@ export const getSingleChat = async (req, resp) => {
       userId: req.user._id,
       topic: chat.topic,
       usage: chat.usage,
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const deleteSingleChat = async (req, resp) => {
+  try {
+    const { chatId } = req.params;
+    const chat = await Chat.findOne({ _id: chatId, userId: req.user._id });
+    console.log("chat are", chat);
+    if (!chat) {
+      resp.status(403).json({
+        message: "You are not allowed to do this",
+      });
+    }
+
+    await Message.deleteMany({ chatId: chat._id });
+    await chat.deleteOne({ _id: chatId });
+
+    resp.status(200).json({
+      message: "Chat Deleted Successfully",
     });
   } catch (error) {
     console.log(error);
