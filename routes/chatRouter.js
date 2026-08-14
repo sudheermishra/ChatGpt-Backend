@@ -4,7 +4,9 @@ import {
   createChat,
   getRecentChat,
   getSingleChat,
+  deleteSingleChat,
 } from "../controllers/chatController.js";
+
 const chatRouter = express.Router();
 
 chatRouter.use(authUserMiddleware);
@@ -15,6 +17,6 @@ chatRouter.get("/getRecentChat", getRecentChat);
 
 chatRouter.get("/:chatId", getSingleChat);
 
-// chatRouter.delete("/:chatId", deleteSignleChat);
+chatRouter.delete("/:chatId", deleteSingleChat);
 
 export default chatRouter;
