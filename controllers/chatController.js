@@ -44,3 +44,27 @@ export const getRecentChat = async (req, resp) => {
     });
   }
 };
+
+export const getSingleChat = async (req, resp) => {
+  try {
+    const { chatId } = req.params;
+    const chat = await Chat.findOne({ _id: chatId, userId: req.user._id });
+    if (!chat) {
+      return resp.status(403).json({
+        message: "Data Not Found",
+      });
+    }
+
+    resp.status(200).json({
+      chatId: chat._id,
+      userId: req.user._id,
+      topic: chat.topic,
+      usage: chat.usage,
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
