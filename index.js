@@ -4,7 +4,7 @@ import dbConnet from "./config/database.js";
 import userRouter from "./routes/userRouter.js";
 import cookieParser from "cookie-parser";
 import chatRouter from "./routes/chatRouter.js";
-
+import messageRouter from "./routes/messageRouter.js";
 dotenv.config();
 
 const app = express();
@@ -18,6 +18,7 @@ app.get("/", (req, resp) => {
 
 app.use("/user", userRouter);
 app.use("/chat", chatRouter);
+app.use("/msg", messageRouter);
 
 const starServer = async () => {
   try {
