@@ -8,3 +8,5 @@ messageRouter.use(authUserMiddleware);
 messageRouter.post("/", sendMessage);
 messageRouter.post("/:chatId", sendMessage);
 messageRouter.get("/:chatId", getMessage);
+
+export default messageRouter;
