@@ -74,7 +74,6 @@ export const deleteSingleChat = async (req, resp) => {
   try {
     const { chatId } = req.params;
     const chat = await Chat.findOne({ _id: chatId, userId: req.user._id });
-    console.log("chat are", chat);
     if (!chat) {
       resp.status(403).json({
         message: "You are not allowed to do this",

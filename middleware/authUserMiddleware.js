@@ -9,6 +9,8 @@ const authUserMiddleware = async (req, resp, next) => {
     }
 
     // token verified
+    // token ke payload ki hashing krke uska digital signautre krenge using secrect key
+    // and match krenge jo token aaya uska digital signature se jo abhi banaya dono same h kya
     const payload = jwt.verify(token, process.env.JWT_SECRET);
 
     // check that token is related toh this user id or not
@@ -32,3 +34,5 @@ const authUserMiddleware = async (req, resp, next) => {
     resp.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export default authUserMiddleware;

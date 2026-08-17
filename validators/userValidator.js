@@ -25,11 +25,12 @@ export const signupSchema = z.object({
 
 export const loginSchema = z.object({
   email: z.preprocess(
-    (value) => (typeof value == "string" ? value.trim().toLowerCase() : ""),
-    z.email(),
+    (value) =>
+      typeof value == "string" ? value.trim().toLocaleLowerCase() : "",
+    z.email("Email must be valid"),
   ),
 
-  pasword: z
+  password: z
     .string()
     .min(8)
     .max(30)
