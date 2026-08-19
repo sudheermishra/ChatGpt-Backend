@@ -1,11 +1,10 @@
 import express from "express";
-import dotenv from "dotenv";
+import dotenv from "dotenv/config";
 import dbConnet from "./config/database.js";
 import userRouter from "./routes/userRouter.js";
 import cookieParser from "cookie-parser";
 import chatRouter from "./routes/chatRouter.js";
 import messageRouter from "./routes/messageRouter.js";
-dotenv.config();
 
 const app = express();
 
