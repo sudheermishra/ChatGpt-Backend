@@ -24,3 +24,5 @@ export const unauthenticatedUserRateLimiter = async (req, resp, next) => {
     next();
   }
 };
+
+export default unauthenticatedUserRateLimiter;
