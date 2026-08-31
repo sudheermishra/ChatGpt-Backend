@@ -8,17 +8,33 @@ import {
 } from "../controllers/userController.js";
 
 import authUserMiddleware from "../middleware/authUserMiddleware.js";
-
+import unauthenticatedUserRateLimiter from "../middleware/unAuthenticatedUserRateLimiter.js";
+import authenticatedUserRateLimiter from "../middleware/authenticatedUserRateLimiter.js";
 const userRouter = express.Router();
 
-userRouter.post("/signup", signUp);
+userRouter.post("/signup", unauthenticatedUserRateLimiter, signUp);
 
-userRouter.post("/login", logIn);
+userRouter.post("/login", unauthenticatedUserRateLimiter, logIn);
 
-userRouter.post("/logout", logOut);
+userRouter.post(
+  "/logout",
+  authUserMiddleware,
+  authenticatedUserRateLimiter,
+  logOut,
+);
 
-userRouter.get("/profile", authUserMiddleware, profile);
+userRouter.get(
+  "/profile",
+  authUserMiddleware,
+  authenticatedUserRateLimiter,
+  profile,
+);
 
-userRouter.delete("/delete", deleteAccount);
+userRouter.delete(
+  "/delete",
+  authUserMiddleware,
+  authenticatedUserRateLimiter,
+  deleteAccount,
+);
 
 export default userRouter;
