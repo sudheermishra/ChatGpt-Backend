@@ -5,7 +5,7 @@ import userRouter from "./routes/userRouter.js";
 import cookieParser from "cookie-parser";
 import chatRouter from "./routes/chatRouter.js";
 import messageRouter from "./routes/messageRouter.js";
-
+import { connectRedis } from "./config/redis.js";
 const app = express();
 
 app.use(cookieParser());
@@ -22,6 +22,7 @@ app.use("/msg", messageRouter);
 const starServer = async () => {
   try {
     await dbConnet();
+    await connectRedis();
     app.listen(process.env.PORT, () => {
       console.log(`Server is listening on Port ${process.env.PORT}`);
     });
