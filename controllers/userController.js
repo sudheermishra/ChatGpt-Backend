@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../model/userSchema.js";
 import Message from "../model/messageSchema.js";
 import Chat from "../model/chatSchema.js";
+import { redisClient } from "../config/redis.js";
 
 function createToken(userId, email) {
   if (!process.env.JWT_SECRET) {
@@ -110,6 +111,20 @@ export const logIn = async (req, resp) => {
 
 export const logOut = async (req, resp) => {
   try {
+    if (req.token) {
+      const token = req.token;
+      const payload = req.tokenPayload;
+
+      const currentTime = Math.floor(Date.now() / 1000);
+      const remainingTime = payload.exp - currentTime;
+
+      if (remainingTime > 0) {
+        await redisClient.set(`blocklist:${token}`, "blocked", {
+          EX: remainingTime,
+        });
+      }
+    }
+
     resp.clearCookie("token", {
       httpOnly: true,
       secure: false,
