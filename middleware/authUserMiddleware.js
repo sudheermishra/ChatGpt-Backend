@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../model/userSchema.js";
+import { redisClient } from "../config/redis.js";
 
 const authUserMiddleware = async (req, resp, next) => {
   try {
@@ -13,8 +14,15 @@ const authUserMiddleware = async (req, resp, next) => {
     // and match krenge jo token aaya uska digital signature se jo abhi banaya dono same h kya
     const payload = jwt.verify(token, process.env.JWT_SECRET);
 
+    const blockedToken = await redisClient.get(`blocklist:${token}`);
+    if (blockedToken) {
+      return resp.status(401).json({
+        message: "Please login again",
+      });
+    }
+
     // check that token is related toh this user id or not
-    // existingUser will store all the information os this user id
+    // existingUser will store all the information of this user id
     const existingUser = await User.findById({ _id: payload.id });
 
     // if id is not match with payload id then user is not related to this token
@@ -28,6 +36,8 @@ const authUserMiddleware = async (req, resp, next) => {
     // but we can pass information of existingUser in req object
     // we create a user key in req object and pass the information of exisitngUser in it
     req.user = existingUser;
+    req.token = token;
+    req.tokenPayload = payload;
     next();
   } catch (error) {
     console.log(error);
