@@ -7,11 +7,13 @@ import {
   deleteSingleChat,
 } from "../controllers/chatController.js";
 import authenticatedUserRateLimiter from "../middleware/authenticatedUserRateLimiter.js";
-
+import loadUserMiddleware from "../middleware/loadUserMiddleware.js";
 const chatRouter = express.Router();
 
 chatRouter.use(authUserMiddleware);
 chatRouter.use(authenticatedUserRateLimiter);
+chatRouter.use(loadUserMiddleware);
+
 chatRouter.post("/createChat", createChat);
 
 chatRouter.get("/getRecentChat", getRecentChat);
