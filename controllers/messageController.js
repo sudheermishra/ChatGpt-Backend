@@ -1,16 +1,12 @@
 import Chat from "../model/chatSchema.js";
 import Message from "../model/messageSchema.js";
 import mongoose from "mongoose";
-import {
-  resetTokenIfNeeded,
-  addUserTokenUsage,
-  tokenLimitReached,
-} from "../utils/userUsage.js";
+import { addUserTokenUsage } from "../utils/userUsage.js";
 import { buildMessageForAi } from "../utils/chatContext.js";
 import { generateAiResponse } from "../services/openRouterService.js";
 import { addChatTokenUsage } from "../utils/chatTokenUsage.js";
 import { updateSummaryIfNeeded } from "../services/summaryService.js";
-
+import { redisClient } from "../config/redis.js";
 export const getMessage = async (req, resp) => {
   try {
     const { chatId } = req.params;
@@ -47,8 +43,6 @@ export const sendMessage = async (req, resp) => {
         message: "Content is Missing",
       });
     }
-    tokenLimitReached(req.user);
-    resetTokenIfNeeded(req.user);
 
     let chat;
     // chatId h means user have already chats then first find all chats
@@ -122,9 +116,24 @@ export const sendMessage = async (req, resp) => {
 
     await chat.save();
 
+    const tokenUsed = await redisClient.incrBy(
+      req.tokenUsageKey,
+      usage.totalTokens,
+    );
+
+    if (tokenUsed === usage.totalTokens) {
+      await redisClient.expire(
+        req.tokenUsageKey,
+        Number(process.env.TOKEN_WINDOW_SECONDS),
+      );
+    }
     resp.status(201).json({
       message: "Message sent successfully",
       chatId: chat._id,
+      reply: aiReply,
+      usage,
+      tokenUsed,
+      tokenLimit: Number(process.env.TOKEN_LIMIT),
       userMessage,
       assistantMessage,
     });
