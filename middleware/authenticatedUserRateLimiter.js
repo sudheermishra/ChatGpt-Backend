@@ -2,7 +2,7 @@ import { redisClient } from "../config/redis.js";
 
 const authenticatedUserRateLimiter = async (req, resp, next) => {
   try {
-    const userId = req.user._id.toString();
+    const userId = req.userId;
 
     const key = `rate-limit:user:${userId}`;
 
@@ -13,6 +13,7 @@ const authenticatedUserRateLimiter = async (req, resp, next) => {
     }
 
     if (requestCount > 20) {
+      const remainingTime = await redisClient.ttl(key);
       return resp.status(429).json({
         message: `Too many requests. Try again after ${remainingTime} seconds.`,
       });
