@@ -150,3 +150,28 @@ export const getShareChat = async (req, resp) => {
     });
   }
 };
+
+export const shareList = async (req, resp) => {
+  try {
+    const { shareId } = req.params;
+    const share = await Share.findOne({
+      _id: shareId,
+      userId: req.user._id,
+    }).populate("accessedBy.userId", "name email");
+
+    if (!share) {
+      return resp.status(403).json({
+        message: "Not Allowed",
+      });
+    }
+    resp.status(200).json({
+      message: "Viewers list",
+      viewers: share.accessedBy,
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
