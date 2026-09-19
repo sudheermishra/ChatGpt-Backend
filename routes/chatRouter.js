@@ -5,6 +5,8 @@ import {
   getRecentChat,
   getSingleChat,
   deleteSingleChat,
+  getShareChat,
+  shareChat,
 } from "../controllers/chatController.js";
 import authenticatedUserRateLimiter from "../middleware/authenticatedUserRateLimiter.js";
 import loadUserMiddleware from "../middleware/loadUserMiddleware.js";
@@ -15,7 +17,8 @@ chatRouter.use(authenticatedUserRateLimiter);
 chatRouter.use(loadUserMiddleware);
 
 chatRouter.post("/createChat", createChat);
-
+chatRouter.post("/share", shareChat);
+chatRouter.get("/share/:shareId", getShareChat);
 chatRouter.get("/getRecentChat", getRecentChat);
 
 chatRouter.get("/:chatId", getSingleChat);
