@@ -13,6 +13,19 @@ const shareSchema = mongoose.Schema(
       ref: "Chat",
       required: true,
     },
+    accessedBy: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        accessedAt: {
+          type: Date,
+          default: Date.now(),
+        },
+      },
+    ],
   },
   { timeStamps: true },
 );
