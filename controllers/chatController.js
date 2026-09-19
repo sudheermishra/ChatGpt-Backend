@@ -1,5 +1,6 @@
 import Chat from "../model/chatSchema.js";
 import Message from "../model/messageSchema.js";
+import Share from "../model/shareSchema.js";
 
 export const createChat = async (req, resp) => {
   try {
@@ -85,6 +86,51 @@ export const deleteSingleChat = async (req, resp) => {
 
     resp.status(200).json({
       message: "Chat Deleted Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const shareChat = async (req, resp) => {
+  try {
+    const { chatId } = req.body;
+    const chat = await Chat.findOne({ _id: chatId, userId: req.user._id });
+    if (!chat) {
+      return resp.status(404).json({
+        message: "chat not found",
+      });
+    }
+
+    const share = await Share.create({ chatId: chatId, userId: req.user._id });
+    resp.status(201).json({
+      message: "ShareId created successfully",
+      shareId: `${process.env.DOMAIN_NAME}/chat/share/${share._id}`,
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const getShareChat = async (req, resp) => {
+  try {
+    const { shareId } = req.params;
+    const share = await Share.findById({ _id: shareId });
+    if (!share) {
+      return resp.status(403).json({
+        message: "Shared chat not found",
+      });
+    }
+
+    const messages = await Message.find({ chatId: share.chatId });
+    resp.status(200).json({
+      messages,
     });
   } catch (error) {
     console.log(error);
