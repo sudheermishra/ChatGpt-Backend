@@ -105,10 +105,14 @@ export const shareChat = async (req, resp) => {
       });
     }
 
-    const share = await Share.create({ chatId: chatId, userId: req.user._id });
+    const share = await Share.create({
+      chatId: chatId,
+      userId: req.user._id,
+    });
     resp.status(201).json({
       message: "ShareId created successfully",
       shareId: `${process.env.DOMAIN_NAME}/chat/share/${share._id}`,
+      share,
     });
   } catch (error) {
     console.log(error);
@@ -121,7 +125,13 @@ export const shareChat = async (req, resp) => {
 export const getShareChat = async (req, resp) => {
   try {
     const { shareId } = req.params;
-    const share = await Share.findById({ _id: shareId });
+    const share = await Share.findByIdAndUpdate(
+      shareId,
+      {
+        $push: { accessedBy: [{ userId: req.user._id }] },
+      },
+      { new: true },
+    );
     if (!share) {
       return resp.status(403).json({
         message: "Shared chat not found",
@@ -129,6 +139,7 @@ export const getShareChat = async (req, resp) => {
     }
 
     const messages = await Message.find({ chatId: share.chatId });
+
     resp.status(200).json({
       messages,
     });
