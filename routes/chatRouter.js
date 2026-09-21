@@ -8,6 +8,7 @@ import {
   getShareChat,
   shareChat,
   shareList,
+  blockUser,
 } from "../controllers/chatController.js";
 import authenticatedUserRateLimiter from "../middleware/authenticatedUserRateLimiter.js";
 import loadUserMiddleware from "../middleware/loadUserMiddleware.js";
@@ -21,6 +22,7 @@ chatRouter.post("/createChat", createChat);
 chatRouter.post("/share", shareChat);
 chatRouter.get("/share/:shareId", getShareChat);
 chatRouter.get("/share/:shareId/list", shareList);
+chatRouter.patch("/share/:shareId/block/:userId", blockUser);
 chatRouter.get("/getRecentChat", getRecentChat);
 
 chatRouter.get("/:chatId", getSingleChat);
