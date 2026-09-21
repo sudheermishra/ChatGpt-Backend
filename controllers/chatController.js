@@ -132,12 +132,22 @@ export const getShareChat = async (req, resp) => {
       },
       { new: true },
     );
+
     if (!share) {
       return resp.status(403).json({
         message: "Shared chat not found",
       });
     }
 
+    const accessedUser = await share.accessedBy.find((user) =>
+      user.userId.equals(req.user._id),
+    );
+
+    if (accessedUser?.blockFlag == true) {
+      return resp.status(403).json({
+        message: "You are blocked from this share chat",
+      });
+    }
     const messages = await Message.find({ chatId: share.chatId });
 
     resp.status(200).json({
@@ -167,6 +177,53 @@ export const shareList = async (req, resp) => {
     resp.status(200).json({
       message: "Viewers list",
       viewers: share.accessedBy,
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const blockUser = async (req, resp) => {
+  try {
+    const { shareId, userId } = req.params;
+    const share = await Share.findById({ _id: shareId });
+    if (!share) {
+      return resp.status(404).json({
+        message: "Share Chat Found",
+      });
+    }
+
+    // owner khud ko block naa kr ske
+    if (share.userId.equals(userId)) {
+      return resp.status(400).json({
+        message: "Owner cannot block himself",
+      });
+    }
+
+    // agar owner ki id equal nhi h schema toh yehi se return sirf owner hi block kr skta h
+    if (!share.userId.equals(req.user._id)) {
+      return resp.status(403).json({
+        message: "You are not the owner of this share chat",
+      });
+    }
+
+    await Share.updateOne(
+      {
+        _id: shareId,
+        "accessedBy.userId": userId,
+      },
+      {
+        $set: {
+          "accessedBy.$.blockFlag": true,
+        },
+      },
+    );
+
+    return resp.status(200).json({
+      message: "User blocked successfully",
     });
   } catch (error) {
     console.log(error);
