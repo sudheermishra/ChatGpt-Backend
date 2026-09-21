@@ -24,6 +24,10 @@ const shareSchema = mongoose.Schema(
           type: Date,
           default: Date.now(),
         },
+        blockFlag: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
   },
