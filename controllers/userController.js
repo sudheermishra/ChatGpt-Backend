@@ -5,6 +5,20 @@ import User from "../model/userSchema.js";
 import Message from "../model/messageSchema.js";
 import Chat from "../model/chatSchema.js";
 import { redisClient } from "../config/redis.js";
+const isProd = process.env.NODE_ENV === "production";
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: isProd,
+  sameSite: isProd ? "none" : "lax",
+  maxAge: 60 * 60 * 1000,
+};
+
+const clearCookieOptions = {
+  httpOnly: true,
+  secure: isProd,
+  sameSite: isProd ? "none" : "lax",
+};
 
 function createToken(userId, email) {
   if (!process.env.JWT_SECRET) {
@@ -14,12 +28,6 @@ function createToken(userId, email) {
     expiresIn: "1h",
   });
 }
-
-const cookieOptions = {
-  httpOnly: true,
-  secure: false,
-  maxAge: 60 * 60 * 1000,
-};
 
 export const signUp = async (req, resp) => {
   try {
