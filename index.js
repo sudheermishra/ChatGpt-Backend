@@ -6,12 +6,15 @@ import cookieParser from "cookie-parser";
 import chatRouter from "./routes/chatRouter.js";
 import messageRouter from "./routes/messageRouter.js";
 import { connectRedis } from "./config/redis.js";
+import cors from "cors";
+
 const app = express();
 
-app.use(cookieParser());
-app.use(express.json());
 app.set("trust proxy", 1);
 app.use(cors({ origin: process.env.DOMAIN_NAME, credentials: true }));
+app.use(cookieParser());
+app.use(express.json());
+
 app.get("/", (req, resp) => {
   resp.send("Server is running");
 });
