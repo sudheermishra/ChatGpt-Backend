@@ -8,7 +8,7 @@ import {
 } from "../controllers/userController.js";
 
 import authUserMiddleware from "../middleware/authUserMiddleware.js";
-import unauthenticatedUserRateLimiter from "../middleware/unAuthenticatedUserRateLimiter.js";
+import unauthenticatedUserRateLimiter from "../middleware/unauthenticatedUserRateLimiter.js";
 import authenticatedUserRateLimiter from "../middleware/authenticatedUserRateLimiter.js";
 import loadUserMiddleware from "../middleware/loadUserMiddleware.js";
 const userRouter = express.Router();
